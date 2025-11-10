@@ -21,6 +21,24 @@
     userName = "CBirb";
   };
 
+  gtk = {
+    enable = true;
+    theme = {
+      name = "Adwaita-dark";
+      package = pkgs.gnome-themes-extra;
+    };
+  };
+
+  qt = {
+    enable = true;
+    platformTheme = "gtk"; # makes Qt apps like Dolphin follow GTK theme
+    style = {
+      name = "Adwaita-Dark";
+      package = pkgs.adwaita-qt;
+    };
+  };
+
+  # xdg.portal.enable = true;
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage

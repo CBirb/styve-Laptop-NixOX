@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
   imports =
@@ -56,34 +56,62 @@
   # services.xserver.desktopManager.cinnamon.enable = true;
 
   # KDE
-  # services.displayManager.sddm.enable = true;
-  # services.displayManager.sddm.wayland.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
   # services.desktopManager.plasma6.enable = true;
 
-
-  # Gnome
-  services.xserver = {
-    displayManager.gdm.enable = true;
-    desktopManager.gnome.enable = true;
-  };
-
-  # Hyprland
+    # Hyprland
+  nix.settings = {
+    substituters = ["https://hyprland.cachix.org"];
+    trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
+  }; 
+  
   programs.hyprland = {
-    # Install the packages from nixpkgs
     enable = true;
-    # Whether to enable XWayland
-    xwayland.enable = true;
+    # set the flake package
+    xwayland.enable = true; 
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    # make sure to also set the portal package, so that they are in sync
+    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+  }; 
+
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [ 
+      xdg-desktop-portal-wlr
+      xdg-desktop-portal-gtk
+      kdePackages.xdg-desktop-portal-kde
+      lxqt.xdg-desktop-portal-lxqt
+    ];
   };
 
- #  fonts.packages = with pkgs; [ nerdfonts ];
+  fonts.packages = with pkgs;
+    (builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts)) ++ [
+      # Add any extra fonts here, e.g. dejavu_fonts, noto-fonts, etc.
+        noto-fonts
+        noto-fonts-cjk-sans
+        noto-fonts-color-emoji
+        noto-fonts-cjk-serif
+        julia-mono
+        liberation_ttf
+        dejavu_fonts
+        fira-code
+        fira-code-symbols
+        mplus-outline-fonts.githubRelease
+        dina-font
+        proggyfonts
+        bront_fonts
+        ucs-fonts
+        nerd-fonts.droid-sans-mono
+        nerd-fonts.fira-code 
+    ];
+
+  fonts.fontconfig.enable = true;
 
 
-  # Enable the COSMIC login manager
-  # services.displayManager.cosmic-greeter.enable = true;
-
-  # Enable the COSMIC desktop environment
-  # services.desktopManager.cosmic.enable = true;
-
+  # Udisk
+  services.udisks2.enable = true;
+  
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "at";
@@ -128,7 +156,7 @@
   users.users.steve = {
     isNormalUser = true;
     description = "steve";
-    extraGroups = [ "networkmanager" "wheel" "podman" "libvirt" "libvirtd" "podman" ];
+    extraGroups = [ "networkmanager" "wheel" "podman" "libvirt" "libvirtd" "podman" "render" "kvm" "libvirtd" ];
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -173,6 +201,14 @@
     megasync
     distrobox
     gnome-software
+    ffmpeg-full
+    podman-compose
+    zenity
+
+    # Appimage
+    appimage-run
+    libappimage
+    freerdp  
 
     # Video
     blackmagic
@@ -195,14 +231,58 @@
     rocmPackages.clang
     valgrind
 
-    # Hyprland
-    hyprpolkitagent
+    ## Desktop Tools  
+    kdePackages.dolphin
+    kdePackages.dolphin-plugins
+    kdePackages.konsole
+    kdePackages.yakuake
+    kdePackages.qmlkonsole
+    kdePackages.partitionmanager
+    kdePackages.kpmcore
+    xfce.xfburn
+    xfce.thunar
+    xfce.thunar-volman
+    xfce.thunar-dropbox-plugin
+    xfce.thunar-vcs-plugin
+    xfce.thunar-archive-plugin
+    xfce.thunar-media-tags-plugin
+    gnome-software
+    nemo-with-extensions
+    nemo-python
+    nemo-preview
+    nemo-emblems
+    nemo-seahorse
+    nemo-fileroller
+    nemo-qml-plugin-dbus
+    folder-color-switcher
+    folder-color-switcher
+    gnome.gvfs
+    gvfs
+    gnome-terminal
 
-    # Gnome Extension
-    gnomeExtensions.blur-my-shell
-    gnomeExtensions.just-perfection
-    gnomeExtensions.arc-menu
-    gnome-tweaks 
+    # Hyprland
+    hyprlock
+    hypridle
+    hyprpaper  
+    hyprsunset
+    hyprpicker
+    hyprpolkitagent
+    waybar
+    fuzzel
+    kitty  
+    hyprsysteminfo
+    hyprland-qt-support
+    hyprland-qtutils
+    hyprcursor
+    hyprutils
+    hyprlang
+    hyprwayland-scanner
+    aquamarine
+    hyprgraphics
+    hyprland-qtutils
+    hyprshot
+    udisks
+    udiskie 
 
   ];
 
