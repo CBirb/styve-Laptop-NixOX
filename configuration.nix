@@ -58,57 +58,9 @@
   # KDE
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
-  # services.desktopManager.plasma6.enable = true;
+  services.desktopManager.plasma6.enable = true;
 
-    # Hyprland
-  nix.settings = {
-    substituters = ["https://hyprland.cachix.org"];
-    trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
-  }; 
   
-  programs.hyprland = {
-    enable = true;
-    # set the flake package
-    xwayland.enable = true; 
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    # make sure to also set the portal package, so that they are in sync
-    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-  }; 
-
-  xdg.portal = {
-    enable = true;
-    extraPortals = with pkgs; [ 
-      xdg-desktop-portal-wlr
-      xdg-desktop-portal-gtk
-      kdePackages.xdg-desktop-portal-kde
-      lxqt.xdg-desktop-portal-lxqt
-    ];
-  };
-
-  fonts.packages = with pkgs;
-    (builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts)) ++ [
-      # Add any extra fonts here, e.g. dejavu_fonts, noto-fonts, etc.
-        noto-fonts
-        noto-fonts-cjk-sans
-        noto-fonts-color-emoji
-        noto-fonts-cjk-serif
-        julia-mono
-        liberation_ttf
-        dejavu_fonts
-        fira-code
-        fira-code-symbols
-        mplus-outline-fonts.githubRelease
-        dina-font
-        proggyfonts
-        bront_fonts
-        ucs-fonts
-        nerd-fonts.droid-sans-mono
-        nerd-fonts.fira-code 
-    ];
-
-  fonts.fontconfig.enable = true;
-
-
   # Udisk
   services.udisks2.enable = true;
   

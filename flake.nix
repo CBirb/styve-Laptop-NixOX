@@ -6,13 +6,7 @@
     # nixpkgs.url = "github:Nixos/nixpkgs/nixos-24.11";
     nixpkgs.url = "github:Nixos/nixpkgs/nixos-25.05";
 
-    # Hyprland
-    hyprland.url = "github:hyprwm/Hyprland";
-
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
+ 
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
