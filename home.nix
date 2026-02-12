@@ -1,7 +1,6 @@
 { config, pkgs, ... }:
 
 {
- 
 
   # ----------------------------
   # Basic user settings
@@ -12,41 +11,39 @@
   # ----------------------------
   # Enable Home Manager programs
   # ----------------------------
-  programs.home-manager.enable = true;
-
-  # Git
-  programs.git = {
+ 
+  # wayland.windowManager.hyprland.enable = true;  
+ 
+  programs = {
+    home-manager.enable = true;
+    kitty.enable = true;
+  };
+  
+  programs.git.settings = {
     enable = true;
+    userName  = "CBirb";
     userEmail = "stephan.heinz@gmx.at";
-    userName = "CBirb";
   };
 
-  gtk = {
+  home.sessionPath = [
+    "${builtins.getEnv "HOME"}/bin"
+    "${builtins.getEnv "HOME"}/.miktex/texmfs/install/miktex/bin"
+  ];
+
+  services.picom = {
     enable = true;
-    theme = {
-      name = "Adwaita-dark";
-      package = pkgs.gnome-themes-extra;
-    };
   };
+  ## Force Section Start
 
-  qt = {
-    enable = true;
-    platformTheme = "gtk"; # makes Qt apps like Dolphin follow GTK theme
-    style = {
-      name = "Adwaita-Dark";
-      package = pkgs.adwaita-qt;
-    };
-  };
+  ## Force Section End
 
-  # xdg.portal.enable = true;
+ 
+  home.sessionVariables = {
+    XDG_DATA_DIRS = "/usr/share:/usr/local/share:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share";
+    FONTCONFIG_PATH = "/etc/fonts";
+  };  
 
-  # This value determines the Home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new Home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
+  
+
   home.stateVersion = "24.11";
 }

@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
@@ -14,12 +14,8 @@
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
-  
-  #Luks
-  boot.loader.efi.canTouchEfiVariables = true;  boot.initrd.luks.devices."luks-d1006f2b-4d26-49eb-956c-88f2cd84c095".device = "/dev/disk/by-uuid/d1006f2b-4d26-49eb-956c-88f2cd84c095";
+  boot.loader.efi.canTouchEfiVariables = true;
 
- 
-  
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -48,22 +44,24 @@
     LC_TIME = "de_AT.UTF-8";
   };
 
-   # Enable the X11 windowing system.
-  services.xserver.enable = true;
+  # Enable the X11 windowing system.
+  # You can disable this if you're only using the Wayland session.
+  services.xserver = {
+    enable = true;
+    desktopManager = {
+      xterm.enable = false;
+      xfce.enable = true;
+    };
+  };
 
-  # Enable the Cinnamon Desktop Environment.
-  # services.xserver.displayManager.lightdm.enable = true;
-  # services.xserver.desktopManager.cinnamon.enable = true;
-
-  # KDE
+  # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
   services.desktopManager.plasma6.enable = true;
 
-  
-  # Udisk
-  services.udisks2.enable = true;
-  
+   # Cinnamon
+  programs.gnupg.agent.pinentryPackage = lib.mkForce pkgs.pinentry-qt;
+
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "at";
@@ -72,18 +70,6 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
-
-  # Zswap-Ram
-  zramSwap = {
-    enable = true;
-    algorithm = "zstd";
-    # This refers to the uncompressed size, actual memory usage will be lower.
-    memoryPercent = 30;
-  };
-
-  # ClamAv
-  services.clamav.daemon.enable = true;
-  services.clamav.updater.enable = true;
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -108,14 +94,33 @@
   users.users.steve = {
     isNormalUser = true;
     description = "steve";
-    extraGroups = [ "networkmanager" "wheel" "podman" "libvirt" "libvirtd" "podman" "render" "kvm" "libvirtd" ];
+    extraGroups = [ "networkmanager" "wheel" "podman" "kvm" "libvirtd" "audio" "video" "input" "disk" "libvirt" "render" "realtime" "openrazer" "gamemode" "docker" ];
     packages = with pkgs; [
+      kdePackages.kate
     #  thunderbird
     ];
   };
 
+  
+  # Z-Ram
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+  # This refers to the uncompressed size, actual memory usage will be lower.
+    memoryPercent = 37;
+  };
+
   # Flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  # Udisk
+  services.udisks2.enable = true;
+
+  # ClamAv
+  services.clamav.daemon.enable = true;
+  services.clamav.updater.enable = true;
+
+
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -128,60 +133,151 @@
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
+    parted 
+    gparted
+    stable.insync
+    bash
+    kdePackages.ffmpegthumbs
+    ocamlPackages.ffmpeg
+    ffmpeg
+    ffmpeg-full
+    ffmpeg-normalize
+    zenity
+    gnome-disk-utility
+    clamav
+    clamtk
+    qemu
+    gitFull
+    unzip
+    unrar
+    stable.megasync
+    mission-center
+    bat
+    ptyxis
+    freetype
+    clinfo 
+    unixtools.fdisk
+    util-linux
+    unixtools.util-linux
+    libuuid
+    unixtools.fsck
+    toybox
+    pciutils
+    dmidecode    
+    samba
+    kdePackages.kdenetwork-filesharing
+    
+
+    # Other Tools
+    stable.woeusb
+    smartmontools
+    nagiosPlugins.check_smartmon
+    gsmartcontrol
+    xfsprogs
+    libxfs  
+    sysstat
+    busybox  
+
+    # My Stuff
+    unstable.parabolic
+
+    # Container
+    distrobox
+    podman-compose
+    docker-compose
+    kubernix
+    kubernetes
+    kubergrunt
+    gearlever
+
+    # Virt-Manager
+    dnsmasq 
+
+    # Appimage
+    # fetchurl
+    appimage-run
+    libappimage
+    freerdp      
+
+    # Razer
+    openrazer-daemon
+    polychromatic    
+    
+
+    # Pkg
+    pkg  
+    pkgsite
+    pkgdiff
+    pkgconf
+    pkg-config
+ 
+    ## Sys-Monitoring
     htop
     btop
     fastfetch
-    parted
-    gparted
-    kdePackages.partitionmanager
-    insync
-    qemu
-    clamav
-    clamtk
-    git 
-    distrobox
-    ffmpeg-full
-    kdePackages.kdeconnect-kde
-    wineWowPackages.full
-    winetricks
-    game-devices-udev-rules
-    ptyxis
-    kdePackages.discover
-    bash
-    gnome-disk-utility
-    insync
-    megasync
-    distrobox
-    gnome-software
-    ffmpeg-full
-    podman-compose
-    zenity
 
-    # Appimage
-    appimage-run
-    libappimage
-    freerdp  
+    ## BTRFS  Tools
+    btrfs-progs
+    btrfs-assistant
+    btrfs-list
+    btrfs-heatmap
 
-    # Video
-    blackmagic
-    davinci-resolve
+    # Uni-Tools
+    texliveTeTeX
+    texliveFull
+    miktex
+    texliveGUST
+    texliveBookPub
+    texstudio
+    anki-bin
     
-    # Coding
-    gcc
-    gnumake
-    rocmPackages.clang
-    rustc
-    go
+    # GIT
+    stable.github-runner
+    stable.github-desktop
+    stable.github-backup
+    stable.github-release
+
+    # Coding Tools
+    valgrind
     python314
     python313
     python311
+    python310
     libgcc
     zulu
     rustc
     rustup
     go
     rocmPackages.clang
-    valgrind
+
+    ## AMD
+    mesa.opencl
+    mesa
+    mesa-demos
+    driversi686Linux.mesa
+    mesa-gl-headers
+    driversi686Linux.mesa-demos
+    opencl-headers
+    libva
+    libva-utils
+    vulkan-tools
+    vulkan-loader
+    vulkan-headers
+    vulkan-utility-libraries
+    # amdvlk
+    # driversi686Linux.amdvlk
+    amdgpu_top
+    amdenc
+    amdctl
+    amd-ucodegen
+    amd-libflame
+    nvtopPackages.amd
+    rocmPackages.amdsmi
+    lact 
+    zluda
+    rocmPackages.rocminfo
+    # rocmPackages.clr    
+     
 
     ## Desktop Tools  
     kdePackages.dolphin
@@ -191,70 +287,19 @@
     kdePackages.qmlkonsole
     kdePackages.partitionmanager
     kdePackages.kpmcore
-    xfce.xfburn
-    xfce.thunar
-    xfce.thunar-volman
-    xfce.thunar-dropbox-plugin
-    xfce.thunar-vcs-plugin
-    xfce.thunar-archive-plugin
-    xfce.thunar-media-tags-plugin
-    gnome-software
-    nemo-with-extensions
-    nemo-python
-    nemo-preview
-    nemo-emblems
-    nemo-seahorse
-    nemo-fileroller
-    nemo-qml-plugin-dbus
-    folder-color-switcher
-    folder-color-switcher
-    gnome.gvfs
     gvfs
-    gnome-terminal
-
-    # Hyprland
-    hyprlock
-    hypridle
-    hyprpaper  
-    hyprsunset
-    hyprpicker
-    hyprpolkitagent
-    waybar
-    fuzzel
-    kitty  
-    hyprsysteminfo
-    hyprland-qt-support
-    hyprland-qtutils
-    hyprcursor
-    hyprutils
-    hyprlang
-    hyprwayland-scanner
-    aquamarine
-    hyprgraphics
-    hyprland-qtutils
-    hyprshot
-    udisks
-    udiskie 
+    gnome-terminal     
 
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
-  programs.mtr.enable = true;
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
+  # programs.mtr.enable = true;
+  # programs.gnupg.agent = {
+  #   enable = true;
+  #   enableSSHSupport = true;
+  # };
 
-  # Garbage Collection
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 10d";
-  };
-
-  nix.settings.auto-optimise-store = true;
-  
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.

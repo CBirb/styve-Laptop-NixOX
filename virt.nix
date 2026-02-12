@@ -1,56 +1,67 @@
-{ config, pkgs, ... }:
-
+{ config, pkgs, lib, ... }:
 
 {
-  # Libvirt
-  # virtualisation.libvirtd = {
-  #   enable = true;
-  #   qemu.vhostUserPackages = with pkgs; [ virtiofsd ];
-  # };
-  
-  # Enable TPM emulation (optional)
-  # virtualisation.libvirtd.qemu = {
-  #   swtpm.enable = true;
-  #   ovmf.packages = [ pkgs.OVMFFull.fd ];
-  # };
-
+   # Virt Manager
   virtualisation.libvirtd = {
     enable = true;
+    # qemu.vhostUserPackages = with pkgs; [ virtiofsd ];
     qemu = {
       vhostUserPackages = with pkgs; [ virtiofsd ];
       package = pkgs.qemu_kvm;
-      runAsRoot = true;
       swtpm.enable = true;
-      ovmf = {
-        enable = true;
-        packages = [(pkgs.OVMF.override {
-          secureBoot = true;
-          tpmSupport = true;
-        }).fd];
-      };
+      # ovmf.packages = [ pkgs.OVMFFull.fd ];
     };
   };
+  # virtualisation.spiceUSBRedirection.enable = true;
 
-
-
-  # Enable USB redirection (optional)
-  virtualisation.spiceUSBRedirection.enable = true;
-
-  # Virt-Manager
   programs.virt-manager.enable = true;
 
   # Waydroid
   virtualisation.waydroid.enable = true;
- 
-  # Flatpak
-  services.flatpak.enable = true;
+  
+  # Enable USB redirection (optional)
+  virtualisation.spiceUSBRedirection.enable = true;
 
-
-  # Container
-  virtualisation.podman = {
+  # Appimages
+  programs.appimage = {
     enable = true;
-    dockerCompat = true;
-    defaultNetwork.settings.dns_enabled = true; # Required for containers under podman-compose to be able to talk to each other.  
+    binfmt = true;
   };
 
+  # Flathub
+  services.flatpak.enable = true;
+
+  # Enable common container config files in /etc/containers
+  virtualisation.containers.enable = true;
+  virtualisation = {
+    podman = {
+      enable = true;
+      # Create a `docker` alias for podman, to use it as a drop-in replacement
+      dockerCompat = true;
+      # Required for containers under podman-compose to be able to talk to each other.
+      defaultNetwork.settings.dns_enabled = true;
+    };
+  };
+
+  virtualisation.oci-containers = {
+    # backend defaults to "podman"
+    backend = "podman";
+    containers = {
+      # foo = {
+      #   # ...
+      # };
+    };
+  };
+
+  # Optionally, create a Docker compatibility alias
+  programs.zsh.shellAliases = {
+    docker = "podman";
+  };
+
+  # FreeRDP
+  
+  services.xrdp.enable = true;
+  services.xrdp.defaultWindowManager = "startplasma-x11";
+  services.xrdp.openFirewall = true;
 }
+
