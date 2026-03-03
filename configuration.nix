@@ -59,6 +59,39 @@
   services.displayManager.sddm.wayland.enable = true;
   services.desktopManager.plasma6.enable = true;
 
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [ 
+      xdg-desktop-portal-wlr
+      xdg-desktop-portal-gtk
+      kdePackages.xdg-desktop-portal-kde
+    #   lxqt.xdg-desktop-portal-lxqt
+    ];
+  };
+    
+  fonts.packages = with pkgs;
+    (builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts)) ++ [
+      # Add any extra fonts here, e.g. dejavu_fonts, noto-fonts, etc.
+        noto-fonts
+        noto-fonts-cjk-sans
+        noto-fonts-color-emoji
+        noto-fonts-cjk-serif
+        julia-mono
+        liberation_ttf
+        dejavu_fonts
+        fira-code
+        fira-code-symbols
+        mplus-outline-fonts.githubRelease
+        dina-font
+        proggyfonts
+        bront_fonts
+        ucs-fonts
+        nerd-fonts.droid-sans-mono
+        nerd-fonts.fira-code 
+    ];
+
+  fonts.fontconfig.enable = true;
+
    # Cinnamon
   programs.gnupg.agent.pinentryPackage = lib.mkForce pkgs.pinentry-qt;
 
@@ -123,7 +156,7 @@
 
 
   # Install firefox.
-  programs.firefox.enable = true;
+  # programs.firefox.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -167,6 +200,36 @@
     samba
     kdePackages.kdenetwork-filesharing
     
+    # Terminal
+    ghostty
+    yazi
+    yaziPlugins.git 
+    yaziPlugins.sudo
+    yaziPlugins.ouch
+    yaziPlugins.nord
+    yaziPlugins.lsar
+    yaziPlugins.glow
+    yaziPlugins.diff
+    yaziPlugins.rsync
+    yaziPlugins.piper
+    yaziPlugins.mount
+    yaziPlugins.gitui
+    yaziPlugins.dupes
+    yaziPlugins.chmod
+    yaziPlugins.miller
+    # yaziPlugins.mactag
+    yaziPlugins.duckdb
+    yaziPlugins.bypass
+    yaziPlugins.yatline
+    yaziPlugins.restore
+    yaziPlugins.lazygit
+    yaziPlugins.starship
+    yaziPlugins.projects
+    yaziPlugins.mime-ext
+    yaziPlugins.compress
+    yaziPlugins.vcs-files
+    yaziPlugins.mediainfo
+    yaziPlugins.bookmarks
 
     # Other Tools
     stable.woeusb
@@ -177,12 +240,17 @@
     libxfs  
     sysstat
     busybox  
+    steghide
+    uutils-coreutils-noprefix
+    coreutils-full
+    gnupg
 
     # My Stuff
     unstable.parabolic
 
     # Container
     distrobox
+    podman
     podman-compose
     docker-compose
     kubernix
@@ -237,6 +305,11 @@
     stable.github-backup
     stable.github-release
 
+    # Codeberg
+    stable.codeberg-cli
+    stable.codeberg-pages
+    stable.fjo
+
     # Coding Tools
     valgrind
     python314
@@ -289,16 +362,67 @@
     kdePackages.kpmcore
     gvfs
     gnome-terminal     
+    stable.xfce.thunar
+    stable.xfce.thunar-volman
+    stable.xfce.thunar-dropbox-plugin
+    stable.xfce.thunar-vcs-plugin
+    stable.xfce.thunar-archive-plugin
+    stable.xfce.thunar-media-tags-plugin
+    cinnamon-control-center
+    cinnamon-menus
+    cinnamon-control-center
+    cinnamon
+    cinnamon-desktop
+    cinnamon-translations
+    mint-l-theme
+    mint-themes
+    andromeda-gtk-theme
+    nemo-with-extensions
+    nemo-python
+    nemo-preview
+    nemo-emblems
+    nemo-seahorse
+    nemo-fileroller
+    nemo-qml-plugin-dbus
+    folder-color-switcher
+    gvfs
+    gnome.gvfs
+    xfce.tumbler
+    gdk-pixbuf
+    gdk-pixbuf-xlib
+    ffmpegthumbnailer    
+
+    # Surfing
+    gnunet
+    gnunet-gtk
+    gnunet-messenger-cli
+    libgnurl
+    libgnunetchat
 
   ];
 
+  # T
+  environment.variables = {
+    RUSTICL_ENABLE = "radeonsi";
+    DISTROBOX_HOST_PACKAGE_PATH = "/run/current-system/sw";
+  };
+  
+  # Garbage Collection
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 10d";
+  };
+  nix.settings.auto-optimise-store = true;
+
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
+  programs.mtr.enable = true;
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
 
   # List services that you want to enable:
 
