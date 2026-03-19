@@ -10,6 +10,7 @@
       ./hardware-configuration.nix
       ./game.nix
       ./virt.nix
+      ./coding.nix
     ];
 
   # Bootloader.
@@ -298,6 +299,9 @@
     texliveBookPub
     texstudio
     anki-bin
+    postgrest
+    postgresql
+    pgadmin4-desktopmode
     
     # GIT
     stable.github-runner
@@ -322,6 +326,9 @@
     rustup
     go
     rocmPackages.clang
+
+    # Coding Editors
+    zed-editor
 
     ## AMD
     mesa.opencl
