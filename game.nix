@@ -47,7 +47,7 @@
        enable = true;
        capSysNice = true;
      };
-    steam = {
+   steam = {
       enable = true;
       gamescopeSession.enable = true;
       remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
@@ -65,10 +65,10 @@
         libpulseaudio
         libvorbis
         stdenv.cc.cc.lib
-      ];
-    };
-    };
-  };
+       ];
+       };
+     };
+   };
   # hardware.xone.enable = true; # support for the xbox controller USB dongle
   services.getty.autologinUser = "steve";
   environment = {

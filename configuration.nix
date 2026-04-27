@@ -45,20 +45,41 @@
     LC_TIME = "de_AT.UTF-8";
   };
 
+  # Kernel
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   # Enable the X11 windowing system.
   # You can disable this if you're only using the Wayland session.
   services.xserver = {
     enable = true;
     desktopManager = {
-      xterm.enable = false;
-      xfce.enable = true;
+     xterm.enable = false;
+     xfce.enable = true;
     };
   };
 
   # Enable the KDE Plasma Desktop Environment.
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-  services.desktopManager.plasma6.enable = true;
+  # services.displayManager.sddm.enable = true;
+  # services.displayManager.sddm.wayland.enable = true;
+  # services.desktopManager.plasma6.enable = true;
+
+  # Cinnamon Desktop
+  services.xserver.desktopManager.cinnamon.enable = true;
+  services.xserver.displayManager.lightdm.enable = true;
+
+  # Enable the GNOME Desktop Environment.
+  # services.displayManager.gdm.enable = true;
+  # services.desktopManager.gnome.enable = true;
+
+  # Gnome QT
+  # qt = {
+  #   enable = true;
+  #   platformTheme = "gnome";
+  #   style = "adwaita-dark";
+  # };
+
+  # Gnome Services
+  # networking.networkingManager.enable = true;
 
   xdg.portal = {
     enable = true;
@@ -124,11 +145,32 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+  # Power Management
+  # 1. Disable the default GNOME power manager to avoid conflicts
+  services.power-profiles-daemon.enable = false;
+
+  # 2. Enable TLP
+  services.tlp = {
+    enable = true;
+    settings = {
+      # Optional: Fine-tune for your Ryzen 5 7530U
+      CPU_SCALING_GOVERNOR_ON_AC = "performance";
+      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+
+      CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+      CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+
+      # Helps with AMD-specific power saving
+      PLATFORM_PROFILE_ON_BAT = "low-power";
+      PLATFORM_PROFILE_ON_AC = "performance";
+    };
+  };
+
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.steve = {
     isNormalUser = true;
     description = "steve";
-    extraGroups = [ "networkmanager" "wheel" "podman" "kvm" "libvirtd" "audio" "video" "input" "disk" "libvirt" "render" "realtime" "openrazer" "gamemode" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "podman" "kvm" "libvirtd" "audio" "video" "input" "disk" "libvirt" "render" "realtime" "openrazer" "gamemode" "podman" ];
     packages = with pkgs; [
       kdePackages.kate
     #  thunderbird
@@ -166,6 +208,7 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    neovim
     wget
     parted 
     gparted
@@ -200,6 +243,7 @@
     dmidecode    
     samba
     kdePackages.kdenetwork-filesharing
+    lsb-release
     
     # Terminal
     ghostty
@@ -252,6 +296,7 @@
     # Container
     distrobox
     podman
+    podman-desktop
     podman-compose
     docker-compose
     kubernix
@@ -269,8 +314,8 @@
     freerdp      
 
     # Razer
-    openrazer-daemon
-    polychromatic    
+    # openrazer-daemon
+    # polychromatic    
     
 
     # Pkg
@@ -304,10 +349,10 @@
     pgadmin4-desktopmode
     
     # GIT
-    stable.github-runner
-    stable.github-desktop
-    stable.github-backup
-    stable.github-release
+    # stable.github-runner
+    # stable.github-desktop
+    # stable.github-backup
+    # stable.github-release
 
     # Codeberg
     stable.codeberg-cli
@@ -367,6 +412,7 @@
     kdePackages.qmlkonsole
     kdePackages.partitionmanager
     kdePackages.kpmcore
+    kdePackages.discover
     gvfs
     gnome-terminal     
     stable.xfce.thunar
@@ -398,6 +444,12 @@
     gdk-pixbuf
     gdk-pixbuf-xlib
     ffmpegthumbnailer    
+    gnome-tweaks
+
+    # Gnome Tools
+    gnomeExtensions.blur-my-shell
+    gnomeExtensions.just-perfection
+    gnomeExtensions.arc-menu
 
     # Surfing
     gnunet
