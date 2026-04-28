@@ -52,20 +52,27 @@
   # You can disable this if you're only using the Wayland session.
   services.xserver = {
     enable = true;
-    desktopManager = {
-     xterm.enable = false;
-     xfce.enable = true;
-    };
+    # desktopManager = {
+    #   xterm.enable = false;
+    #   xfce.enable = true;
+    # };
   };
 
   # Enable the KDE Plasma Desktop Environment.
-  # services.displayManager.sddm.enable = true;
-  # services.displayManager.sddm.wayland.enable = true;
+  services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.wayland.enable = true;
   # services.desktopManager.plasma6.enable = true;
 
+  # Hyprland
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true; # recommended for most users
+    xwayland.enable = true; # Xwayland can be disabled.
+  };
+
   # Cinnamon Desktop
-  services.xserver.desktopManager.cinnamon.enable = true;
-  services.xserver.displayManager.lightdm.enable = true;
+  # services.xserver.desktopManager.cinnamon.enable = true;
+  # services.xserver.displayManager.lightdm.enable = true;
 
   # Enable the GNOME Desktop Environment.
   # services.displayManager.gdm.enable = true;
@@ -87,6 +94,7 @@
       xdg-desktop-portal-wlr
       xdg-desktop-portal-gtk
       kdePackages.xdg-desktop-portal-kde
+      xdg-desktop-portal-hyprland
     #   lxqt.xdg-desktop-portal-lxqt
     ];
   };
@@ -170,7 +178,7 @@
   users.users.steve = {
     isNormalUser = true;
     description = "steve";
-    extraGroups = [ "networkmanager" "wheel" "podman" "kvm" "libvirtd" "audio" "video" "input" "disk" "libvirt" "render" "realtime" "openrazer" "gamemode" "podman" ];
+    extraGroups = [ "networkmanager" "wheel" "podman" "kvm" "libvirtd" "audio" "video" "input" "disk" "libvirt" "libvirtd" "render" "realtime" "openrazer" "gamemode" "podman" ];
     packages = with pkgs; [
       kdePackages.kate
     #  thunderbird
@@ -199,7 +207,7 @@
 
 
   # Install firefox.
-  # programs.firefox.enable = true;
+  programs.firefox.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -244,7 +252,8 @@
     samba
     kdePackages.kdenetwork-filesharing
     lsb-release
-    
+    eza
+
     # Terminal
     ghostty
     yazi
@@ -402,7 +411,24 @@
     zluda
     rocmPackages.rocminfo
     # rocmPackages.clr    
-     
+    
+    # Gaming
+    angband
+    crawl
+    nethack
+    # dungeon
+    nudoku
+    # 2048-cli
+    bastet
+    dwarf-fortress
+    brogue-ce
+    # empire
+    vitetris
+
+    # Fun Tools
+    ani-cli
+    mpv
+    browsh
 
     ## Desktop Tools  
     kdePackages.dolphin
@@ -445,6 +471,34 @@
     gdk-pixbuf-xlib
     ffmpegthumbnailer    
     gnome-tweaks
+ 
+    # Hyprland
+    waybar
+    kitty
+    hyprpaper
+    hyprpicker
+    hyprlauncher
+    hypridle
+    hyprlock
+    hyprsysteminfo
+    hyprsunset
+    hyprpolkitagent
+    hyprland-qt-support
+    # hyprqt6engine
+    hyprpwcenter
+    # hyprshutdown
+    hyprtoolkit
+    hyprcursor
+    hyprutils
+    hyprlang
+    hyprwayland-scanner
+    aquamarine
+    hyprgraphics
+    # hyprland-guiutils    
+    fuzzel
+    brightnessctl
+    pavucontrol
+    # brightness-controller
 
     # Gnome Tools
     gnomeExtensions.blur-my-shell
