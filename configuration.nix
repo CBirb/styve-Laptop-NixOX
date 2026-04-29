@@ -52,16 +52,16 @@
   # You can disable this if you're only using the Wayland session.
   services.xserver = {
     enable = true;
-    # desktopManager = {
-    #   xterm.enable = false;
-    #   xfce.enable = true;
-    # };
+    desktopManager = {
+      xterm.enable = false;
+      xfce.enable = true;
+    };
   };
 
   # Enable the KDE Plasma Desktop Environment.
   services.displayManager.sddm.enable = true;
   services.displayManager.sddm.wayland.enable = true;
-  # services.desktopManager.plasma6.enable = true;
+  services.desktopManager.plasma6.enable = true;
 
   # Hyprland
   programs.hyprland = {
@@ -134,6 +134,9 @@
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
+  # Battery Display
+  services.upower.enable = true;
+
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -155,24 +158,26 @@
 
   # Power Management
   # 1. Disable the default GNOME power manager to avoid conflicts
-  services.power-profiles-daemon.enable = false;
+  # services.power-profiles-daemon.enable = false;
 
   # 2. Enable TLP
-  services.tlp = {
-    enable = true;
-    settings = {
-      # Optional: Fine-tune for your Ryzen 5 7530U
-      CPU_SCALING_GOVERNOR_ON_AC = "performance";
-      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+  # services.tlp = {
+  #   enable = true;
+  #   settings = {
+  #     # Optional: Fine-tune for your Ryzen 5 7530U
+  #     CPU_SCALING_GOVERNOR_ON_AC = "performance";
+  #     CPU_SCALING_GOVERNOR_ON_BAT = "balanced";
 
-      CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
-      CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+  #     CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+  #     CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
 
-      # Helps with AMD-specific power saving
-      PLATFORM_PROFILE_ON_BAT = "low-power";
-      PLATFORM_PROFILE_ON_AC = "performance";
-    };
-  };
+  #     # Helps with AMD-specific power saving
+  #     PLATFORM_PROFILE_ON_BAT = "low-power";
+  #     PLATFORM_PROFILE_ON_AC = "balanced";
+
+  #     # RANDOM_ADD_HERE = "amd_pstate=active";
+  #   };
+  # };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.steve = {
@@ -429,6 +434,7 @@
     ani-cli
     mpv
     browsh
+    sl
 
     ## Desktop Tools  
     kdePackages.dolphin
@@ -471,7 +477,13 @@
     gdk-pixbuf-xlib
     ffmpegthumbnailer    
     gnome-tweaks
- 
+    nautilus
+    nautilus-python
+    nautilus-open-in-blackbox
+    nautilus-open-any-terminal
+    sushi
+    insync-nautilus
+
     # Hyprland
     waybar
     kitty
@@ -499,6 +511,13 @@
     brightnessctl
     pavucontrol
     # brightness-controller
+    gnome-keyring
+    libgnome-keyring
+    networkmanagerapplet
+    playerctl
+    libnotify
+    dunst
+    networkmanagerapplet
 
     # Gnome Tools
     gnomeExtensions.blur-my-shell
@@ -520,6 +539,7 @@
     DISTROBOX_HOST_PACKAGE_PATH = "/run/current-system/sw";
   };
   
+    
   # Garbage Collection
   nix.gc = {
     automatic = true;
